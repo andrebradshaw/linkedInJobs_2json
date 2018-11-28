@@ -1,6 +1,6 @@
 function checker(elm, type) {  if (elm != undefined) {    if (type == 'href') {      return elm.href;    }    if (type == 'text') {      return elm.innerText.trim();    }    if (type == 'next') {      return elm;    }  } else {    return '';  }}
 
-var numberOfPagesToLoop = Math.ceil(parseInt(checker(document.getElementsByClassName('jobs-search-two-pane__alerts')[0].getElementsByTagName('div')[1],'text').replace(/\D+/g, ''))/50);
+var numberOfPagesToLoop = Math.ceil(parseInt(checker(document.getElementsByClassName('jobs-search-two-pane__alerts')[0].getElementsByTagName('div')[1],'text').replace(/\D+/g, ''))/50)+10;
 
 function clickJobListItem() {
   setTimeout(() => {
@@ -12,14 +12,14 @@ function clickJobListItem() {
         document.getElementById(obj.getAttribute('id')).scrollIntoView();
 
         obj.getElementsByClassName('job-card-search--clickable')[0].click();
-      }, ((n + 1) * 2800));
+      }, ((n + 1) * 1800));
     }
 
     for (i = 0; i < jobList.length; i++) {
       getJobPostingObj(jobList[i], i);
     }
 
-  }, 2900);
+  }, 2100);
 }
 
 function clickNextPage() {
@@ -31,14 +31,19 @@ setTimeout(()=>{
       if (pg != undefined) {
         pg.getElementsByTagName('button')[0].click();
       } else {
-        console.log('done');
+        console.log('done, bitch');
       }
     }
   }
-},(3000*25));
+},(2200*25));
 }
 
-var first = new Promise(res=>{res(clickJobListItem());});
+function dododo(){
+	var first = new Promise(res=>{res(clickJobListItem());});
+	first.then(clickNextPage());
+}
 
-first.then(clickNextPage())
-//need a loop to run this promise until 'done'
+
+for(u=0; u<numberOfPagesToLoop; u++){
+dododo()
+}
