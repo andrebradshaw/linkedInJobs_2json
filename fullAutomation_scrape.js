@@ -82,7 +82,7 @@ function getJobPosting() {
 
   var geo = vld(/(?<=Company Location\n).+/.exec(company_local.innerText), 0).trim();
   var posted = document.getElementsByClassName('jobs-details-top-card__job-info')[0];
-  var views = vld(/.{0,10}\d+(?=\s+view)/.exec(posted.getElementsByTagName('span')[2].innerText), 0).trim().replace(/\D+/g, '');
+  var views = vld(/.{0,10}\d+(?=\s+view)/.exec(checker(posted.getElementsByTagName('span')[2],'text')), 0).trim().replace(/\D+/g, '');
   var postDate = getPostingDate(posted);
   var jobInfoSummary = document.getElementsByClassName('jobs-box--full-width jobs-details-job-summary')[0];
 
