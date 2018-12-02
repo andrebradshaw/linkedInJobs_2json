@@ -16,7 +16,7 @@ function checker(elm, type) {
   }
 }
 
-function vld(elm, n){if(elm != null){return elm[n]}else{return '';}}
+function vld(elm, n){if(elm != null){return elm[n];}else{return '';}}
 function checkThenDo(x,elm,n){	if(elm != undefined){		return vld(x.exec(elm.innerText),n);	}else{		return '';	}}
 function checkHref(elm, n){if(elm[0] != undefined){return elm[n].href}else{return '';}}
 function getAddress(elm){if(elm != undefined){return elm.getElementsByClassName('a11y-text')[0].innerText.replace(/^To\s+/, '').trim();}else{return '';}}
@@ -29,8 +29,8 @@ function cutDate(str) {
 
 function getPostingDate(elm) {
   if (elm.getElementsByTagName('span')[0] != undefined) {
-    let num = parseInt(vld(/(?<=Posted )\d+.{0,3}(?=\s+)/.exec(elm.getElementsByTagName('span')[0].innerText), 0).replace(/D+/g, ''));
-    let mes = vld(/(?<=Posted )\d+.{0,3}(\sday|\sweek|\smonth|\shour|\sminute)/.exec(elm.getElementsByTagName('span')[0].innerText), 1);
+    let num = parseInt(vld(/(?<=Posted )\d+.{0,3}(?=\s+)/.exec(checker(elm.getElementsByTagName('span')[0], 'text')), 0).replace(/D+/g, ''));
+    let mes = vld(/(?<=Posted )\d+.{0,3}(\sday|\sweek|\smonth|\shour|\sminute)/.exec(checker(elm.getElementsByTagName('span')[0], 'text')), 1);
     let now = new Date().getTime();
     if (/month/.test(mes) === true) {
       return cutDate(new Date(now - (num * 2629800000)));
@@ -53,14 +53,14 @@ function getPostingDate(elm) {
 function getListArr(r) {
   var arr = [];
   for (i = 0; i < r.length; i++) {
-    arr.push(r[i].innerText);
+    arr.push(checker(r[i], 'text'));
   }
   return arr;
 }
 
 function getJobDeetz(obj) {
-  var level = obj.getElementsByClassName('js-formatted-exp-body')[0].innerText;
-  var jobtype = obj.getElementsByClassName('js-formatted-employment-status-body')[0].innerText;
+  var level = checker(obj.getElementsByClassName('js-formatted-exp-body')[0], 'text');
+  var jobtype = checker(obj.getElementsByClassName('js-formatted-employment-status-body')[0], 'text');
   var fnList = obj.getElementsByClassName('js-formatted-job-functions-list')[0].getElementsByTagName('li');
   var indList = obj.getElementsByClassName('js-formatted-industries-list')[0].getElementsByTagName('li');
   var jobfn = getListArr(fnList);
@@ -76,7 +76,7 @@ function getJobDeetz(obj) {
 function getJobPosting() {
   var jobheader = document.getElementsByClassName('jobs-details-top-card__content-container')[0];
   var company_local = jobheader.getElementsByTagName('h3')[0];
-  var jobTitle = jobheader.getElementsByTagName('h1')[0].innerText;
+  var jobTitle = checker(jobheader.getElementsByTagName('h1')[0], 'text');
   var companyId = vld(/(?<=company\/)\d+/.exec(checkHref(company_local.getElementsByTagName('a'), 0)), 0);
 
 
@@ -86,10 +86,10 @@ function getJobPosting() {
   var postDate = getPostingDate(posted);
   var jobInfoSummary = document.getElementsByClassName('jobs-box--full-width jobs-details-job-summary')[0];
 
-  var applicants = vld(/.{0,10}\d+(?=\s+applicant)/.exec(jobInfoSummary.getElementsByTagName('ul')[0].innerText), 0);
+  var applicants = vld(/.{0,10}\d+(?=\s+applicant)/.exec(checker(jobInfoSummary.getElementsByTagName('ul')[0], 'text')), 0);
   var employees = checkThenDo(/.+?\d+(?=\s+employee)/, jobInfoSummary.getElementsByTagName('ul')[1], 0);
   var jobDeetz = getJobDeetz(document.getElementsByClassName('jobs-description-details')[0]);
-  var description = document.getElementsByClassName('jobs-box__html-content')[0].innerText;
+  var description = checker(document.getElementsByClassName('jobs-box__html-content')[0], 'text');
 
 var companyName = vld(/(?<=Company Name\s+).+?(?=\s+Company Location)/m.exec(checker(document.getElementsByClassName('jobs-details-top-card__company-info')[0],'text')), 0).trim();
 
