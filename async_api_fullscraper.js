@@ -9,7 +9,7 @@ async function initJobScraper() {
   var idArr = [];
   var jobArr = [];
   var csvArr = [
-    ["Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Remote","Description"]
+    ["Company Id","Job Posting Url","Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Remote","Description"]
   ];
   var csrf = await getCsrfId();
   var popid = "popup_jobs";
@@ -30,7 +30,7 @@ async function initJobScraper() {
   var num = numRes > 999 ? 1000 : numRes;
   console.log(num);
 
-  var csvReady = (s) => s.replace(/\r|\n/g, ' __ ')
+  var csvReady = (s) => s.replace(/\n/g, '\\n')
     .replace(/(?<=\d),(?=\d)/g, '')
     .replace(/,/g, ';').replace(/\u00E2\u20AC\u2122/gu, '"')
     .replace(/â€™/g, "'")
