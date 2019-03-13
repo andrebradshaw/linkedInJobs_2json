@@ -126,7 +126,7 @@ cd.appendChild(cb);
 var hd = document.createElement("div");
 hd.setAttribute("id", id+"_mover");
 hd.style.width = "99%";
-hd.style.height = "25%";
+hd.style.height = "20%";
 hd.style.backgroundColor = "#000000";
 hd.style.borderTopLeftRadius = ".15em";
 hd.style.borderTopRightRadius = ".15em";
@@ -141,9 +141,9 @@ cd.appendChild(hd);
 var tf = document.createElement("input");
 tf.setAttribute("id", id+"_textfile");
 tf.setAttribute("placeholder", "filename")
-tf.style.width = "38%";
+tf.style.width = "36%";
 tf.style.height = "100%";
-tf.style.padding = "4px";
+tf.style.padding = "6px";
 tf.style.border = "1px solid #000000";
 tf.style.background = "#0f0f0f";
 tf.style.color = "#ffffff";
@@ -158,7 +158,7 @@ var tb = document.createElement("div");
 tb.setAttribute("id", id+"_textarea");
 tb.innerText = "Grabbing Job Ids...";
 tb.style.width = "99%";
-tb.style.height = "75%";
+tb.style.height = "80%";
 tb.style.padding = "3px";
 tb.style.border = "1px solid #000000";
 tb.style.color = "#878787";
@@ -269,7 +269,7 @@ async function looper(){
 	console.log(i);
     var jobsPercCompl = Math.round((jobArr.length/num) *10000)/100;
     gi(document, popid+"_textarea").innerText = 'Scraping Jobs... ' +jobsPercCompl+ '% completed.';
-    if(i == idArr.length) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter';
+    if(i == (idArr.length-1)) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter';
 	await delay(rando(100)+1601);
   }
 }
@@ -308,6 +308,7 @@ function parseObj(obj){
   var applies = obj.data.applies; //number
   var scrapeTimestamp = new Date().getTime(); //number
   var remote = obj.data.workRemoteAllowed ? 'yes' : 'no';
+  var jobPosterUrl = jobPoster ? 'www.linkedin.com/in/'+jobPoster : '';
 
   var csvdat = [
 companyid,
@@ -318,7 +319,7 @@ new Date(lastUpdateDate),
 new Date(expirationDate), 
 csvReady(industry.toString()), 
 csvReady(jobFunction.toString()),
-'www.linkedin.com/in/'+jobPoster,
+jobPosterUrl,
 monthsExpReq,
 csvReady(skills.toString()),
 csvReady(title),
