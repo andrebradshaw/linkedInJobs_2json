@@ -1,7 +1,15 @@
+async function initJobScraper(){
+async function getCsrfId(){
+  var res = await fetch("https://www.linkedin.com/cap/dashboard/home");
+  var text = await res.text();
+  var doc = new DOMParser().parseFromString(text, 'text/html');
+  return doc.getElementById("jet-csrfToken").getAttribute("content");
+}
+
 var idArr = [];
 var jobArr = [];
 var csvArr = [['companyid','jobPostingUrl','jobLocation','orginalListDate','lastUpdateDate','expirationDate','industry','jobFunction','jobPosterUrl','monthsExpReq','skills','title','numberOfApplies','remote','description']];
-var csrf = "ajax:2773576118997798665";
+var csrf = await getCsrfId();
 var popid = "popup_jobs";
 
 
@@ -233,9 +241,6 @@ async function downloadr(str, name) {
   window.URL.revokeObjectURL(url);
 }
 
-createPopTextArea(popid);
-
-
 
 async function searchJobs(p){
   var url = window.location.href.replace(/&start=\d+/,'');
@@ -269,7 +274,7 @@ async function looper(){
 	console.log(i);
     var jobsPercCompl = Math.round((jobArr.length/num) *10000)/100;
     gi(document, popid+"_textarea").innerText = 'Scraping Jobs... ' +jobsPercCompl+ '% completed.';
-    if(i == (idArr.length-1)) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter';
+    if(i == idArr.length -1) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter';
 	await delay(rando(100)+1601);
   }
 }
@@ -308,7 +313,6 @@ function parseObj(obj){
   var applies = obj.data.applies; //number
   var scrapeTimestamp = new Date().getTime(); //number
   var remote = obj.data.workRemoteAllowed ? 'yes' : 'no';
-  var jobPosterUrl = jobPoster ? 'www.linkedin.com/in/'+jobPoster : '';
 
   var csvdat = [
 companyid,
@@ -319,7 +323,7 @@ new Date(lastUpdateDate),
 new Date(expirationDate), 
 csvReady(industry.toString()), 
 csvReady(jobFunction.toString()),
-jobPosterUrl,
+'www.linkedin.com/in/'+jobPoster,
 monthsExpReq,
 csvReady(skills.toString()),
 csvReady(title),
@@ -352,5 +356,7 @@ csvReady(description)
 	};
   return [jdat, csvdat];
 }
-
-loopthrough()
+createPopTextArea(popid);
+loopthrough();
+}
+initJobScraper()
