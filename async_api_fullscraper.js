@@ -9,7 +9,7 @@ async function initJobScraper() {
   var idArr = [];
   var jobArr = [];
   var csvArr = [
-    ['companyid', 'jobPostingUrl', 'jobLocation', 'orginalListDate', 'lastUpdateDate', 'expirationDate', 'industry', 'jobFunction', 'jobPosterUrl', 'monthsExpReq', 'skills', 'title', 'numberOfApplies', 'remote', 'description']
+    ["Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Remote","Description"]
   ];
   var csrf = await getCsrfId();
   var popid = "popup_jobs";
@@ -339,7 +339,7 @@ async function initJobScraper() {
   function parseObj(obj) {
     var companyid = obj.data.companyDetails.company ? obj.data.companyDetails.company.replace(/\D+/g, '') : '0';
     var description = obj.data.description.text;
-    var orginalListDate = obj.data.originalListedAt;
+    var originalListDate = obj.data.originalListedAt;
     var lastUpdateDate = obj.data.listedAt;
     var monthsExpReq = obj.data.candidateMonthsOfExperience ? obj.data.candidateMonthsOfExperience : '0';
     var expirationDate = obj.data.expireAt;
@@ -363,7 +363,7 @@ async function initJobScraper() {
       companyid,
       jobPostingUrl,
       csvReady(formattedLocation),
-      new Date(orginalListDate),
+      new Date(originalListDate),
       new Date(lastUpdateDate),
       new Date(expirationDate),
       csvReady(industry.toString()),
@@ -380,7 +380,7 @@ async function initJobScraper() {
       "companyid": companyid,
       "title": title,
       "description": description,
-      "orginalListDate": orginalListDate,
+      "originalListDate": originalListDate,
       "lastUpdateDate": lastUpdateDate,
       "monthsExpReq": monthsExpReq,
       "expirationDate": expirationDate,
