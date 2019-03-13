@@ -1,8 +1,8 @@
 var idArr = [];
 var jobArr = [];
+var csvArr = [['companyid','jobPostingUrl','jobLocation','orginalListDate','lastUpdateDate','expirationDate','industry','jobFunction','jobPosterUrl','monthsExpReq','skills','title','numberOfApplies','remote','description']];
 var csrf = "ajax:2773576118997798665";
 var popid = "popup_jobs";
-/* alert(document.getElementById("jet-csrfToken").getAttribute("content")) */
 
 
 var delay = (ms) => new Promise(res => setTimeout(res, ms));
@@ -17,11 +17,12 @@ var gi = (ob, nm) => ob ? ob.getElementById(nm) : console.log(ob);
 var cleanName = (s) => s.replace(/(?<=^.+?)\s+-\s+.+|(?<=^.+?)\s*[sSJj][Rr].+|(?<=^.+?)\s*(III|IV|II).*|(?<=^.+?)\b,.*|(?<=^.+?)\s*\(.*/, '');
 var fixCase = (s) => s.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
+/* alert(document.getElementById("jet-csrfToken").getAttribute("content")) */
 var numRes = parseInt(document.getElementsByClassName('jobs-search-two-pane__wrapper jobs-search-two-pane__wrapper--two-pane')[0].getElementsByClassName('t-12 t-black--light t-normal')[0].innerText.replace(/\D+/g, ''));
 var num = numRes > 999 ? 1000 : numRes;
 console.log(num);
 
-
+var csvReady = (s) => s.replace(/\r|\n/g, ' ___ ').replace(/,/g, ';');
 
 var tsvTo2dArr = (tsv) => tsv.split(/\r|\n/)
 .map(itm=> itm.split(/(?<=^|\t)/));
@@ -251,10 +252,10 @@ async function loopthrough(){
 	await delay(rando(100)+3601);
     var idsPercCompl = Math.round((idArr.length/num) *100);
     gi(document, popid+"_textarea").innerText = 'Mapping Job Ids... ' +idsPercCompl+ '% completed.\nThis part will take about '+(Math.round((num/25)*3.7)+10)+' seconds\nThen we will dive into those jobs.';
-    if(idArr.length >= (num - 10)) {
+    if(idArr.length >= (num - 3)) {
       gi(document, popid+"_textarea").innerText = 'Initializing Scraper...';
-		await delay(10000);
-		looper();
+	  await delay(10000);
+	  looper();
     }
   }
 }
@@ -275,7 +276,12 @@ async function getPostingById(id){
   var res = await fetch("https://www.linkedin.com/voyager/api/jobs/jobPostings/"+id, {"credentials":"include","headers":{"accept":"application/vnd.linkedin.normalized+json+2.1","accept-language":"en-US,en;q=0.9","csrf-token":csrf,"x-li-deco-include-micro-schema":"true","x-li-lang":"en_US","x-li-page-instance":"urn:li:page:d_flagship3_job_details;8+bX55W5TJqvu90HI366wQ==","x-li-track":"{\"clientVersion\":\"1.2.7702.0\",\"osName\":\"web\",\"timezoneOffset\":"+timeOffset+",\"deviceFormFactor\":\"DESKTOP\",\"mpName\":\"voyager-web\"}","x-restli-protocol-version":"2.0.0"},"referrerPolicy":"no-referrer-when-downgrade","body":null,"method":"GET","mode":"cors"});
   var jdat = await res.json();
   var output = parseObj(jdat);
-  if(jobArr.some(job=> job.jobPostingUrl == output.jobPostingUrl) === false) jobArr.push(output);
+  var j = output[0];
+  var c = output[1]
+  if(jobArr.some(job=> job.jobPostingUrl == j.jobPostingUrl) === false) {
+   jobArr.push(j);
+   csvArr.push(c);
+  }
 }
 
 function parseObj(obj){
@@ -283,8 +289,8 @@ function parseObj(obj){
   var description = obj.data.description.text; //string
   var orginalListDate = obj.data.originalListedAt; //number milsec
   var lastUpdateDate = obj.data.listedAt; //number milsec
-  var monthsExpReq = obj.data.candidateMonthsOfExperience; //number
-  var expiry = obj.data.expireAt; //number milsec
+  var monthsExpReq = obj.data.candidateMonthsOfExperience ? obj.data.candidateMonthsOfExperience : '0'; //number
+  var expirationDate = obj.data.expireAt; //number milsec
   var industry = obj.data.formattedIndustries; //array
   var jobFunction = obj.data.formattedJobFunctions; //array
   var jobPostingUrl = obj.data.jobPostingUrl.replace(/\?.+/, ''); //string
@@ -299,8 +305,25 @@ function parseObj(obj){
   var applies = obj.data.applies; //number
   var scrapeTimestamp = new Date().getTime(); //number
   var remote = obj.data.workRemoteAllowed ? 'yes' : 'no';
-  var salary = obj.data.salaryInsights;
-  
+
+  var csvdat = [
+companyid,
+jobPostingUrl,
+csvReady(formattedLocation), 
+new Date(orginalListDate), 
+new Date(lastUpdateDate), 
+new Date(expirationDate), 
+csvReady(industry.toString()), 
+csvReady(jobFunction.toString()),
+'www.linkedin.com/in/'+jobPoster,
+monthsExpReq,
+csvReady(skills.toString()),
+csvReady(title),
+applies,
+remote,
+csvReady(description)
+]
+// csvReady
   var jdat = {
 	"companyid":companyid,
 	"title":title,
@@ -308,7 +331,7 @@ function parseObj(obj){
     "orginalListDate":orginalListDate,
 	"lastUpdateDate":lastUpdateDate,
     "monthsExpReq": monthsExpReq,
-	"expiry":expiry,
+	"expirationDate":expirationDate,
 	"industry":industry,
 	"jobFunction":jobFunction,
 	"jobPostingUrl":jobPostingUrl,
@@ -321,10 +344,9 @@ function parseObj(obj){
 	"views":views,
     "applies": applies,
     "remote": remote,
-    "salary":salary,
 	"scrapeTimestamp":scrapeTimestamp,
 	};
-  return jdat;
+  return [jdat, csvdat];
 }
 
 loopthrough()
