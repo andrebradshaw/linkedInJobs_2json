@@ -1,8 +1,8 @@
 var idArr = [];
 var jobArr = [];
-/* alert(document.getElementById("jet-csrfToken").getAttribute("content")) */
 var csrf = "ajax:2773576118997798665";
 var popid = "popup_jobs";
+/* alert(document.getElementById("jet-csrfToken").getAttribute("content")) */
 
 
 var delay = (ms) => new Promise(res => setTimeout(res, ms));
@@ -17,12 +17,9 @@ var gi = (ob, nm) => ob ? ob.getElementById(nm) : console.log(ob);
 var cleanName = (s) => s.replace(/(?<=^.+?)\s+-\s+.+|(?<=^.+?)\s*[sSJj][Rr].+|(?<=^.+?)\s*(III|IV|II).*|(?<=^.+?)\b,.*|(?<=^.+?)\s*\(.*/, '');
 var fixCase = (s) => s.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
-
 var numRes = parseInt(document.getElementsByClassName('jobs-search-two-pane__wrapper jobs-search-two-pane__wrapper--two-pane')[0].getElementsByClassName('t-12 t-black--light t-normal')[0].innerText.replace(/\D+/g, ''));
 var num = numRes > 999 ? 1000 : numRes;
 console.log(num);
-
-
 
 
 
@@ -253,10 +250,10 @@ async function loopthrough(){
     console.log(i);
 	await delay(rando(100)+3601);
     var idsPercCompl = Math.round((idArr.length/num) *100);
-    gi(document, popid+"_textarea").innerText = 'Mapping Job Ids... ' +idsPercCompl+ '% completed.\nThis part will take about '+(Math.round((num/25)*3.7)+20)+' seconds\nThen we will dive into those jobs.';
+    gi(document, popid+"_textarea").innerText = 'Mapping Job Ids... ' +idsPercCompl+ '% completed.\nThis part will take about '+(Math.round((num/25)*3.7)+10)+' seconds\nThen we will dive into those jobs.';
     if(idArr.length >= (num - 10)) {
       gi(document, popid+"_textarea").innerText = 'Initializing Scraper...';
-		await delay(20000);
+		await delay(10000);
 		looper();
     }
   }
@@ -268,12 +265,14 @@ async function looper(){
 	console.log(i);
     var jobsPercCompl = Math.round((jobArr.length/num) *10000)/100;
     gi(document, popid+"_textarea").innerText = 'Scraping Jobs... ' +jobsPercCompl+ '% completed.';
+    if(i == idArr.length) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter';
 	await delay(rando(100)+1601);
   }
 }
 
 async function getPostingById(id){
-  var res = await fetch("https://www.linkedin.com/voyager/api/jobs/jobPostings/"+id, {"credentials":"include","headers":{"accept":"application/vnd.linkedin.normalized+json+2.1","accept-language":"en-US,en;q=0.9","csrf-token":csrf,"x-li-deco-include-micro-schema":"true","x-li-lang":"en_US","x-li-page-instance":"urn:li:page:d_flagship3_job_details;8+bX55W5TJqvu90HI366wQ==","x-li-track":"{\"clientVersion\":\"1.2.7702.0\",\"osName\":\"web\",\"timezoneOffset\":-5,\"deviceFormFactor\":\"DESKTOP\",\"mpName\":\"voyager-web\"}","x-restli-protocol-version":"2.0.0"},"referrerPolicy":"no-referrer-when-downgrade","body":null,"method":"GET","mode":"cors"});
+  var timeOffset = -(new Date().getTimezoneOffset() / 60);
+  var res = await fetch("https://www.linkedin.com/voyager/api/jobs/jobPostings/"+id, {"credentials":"include","headers":{"accept":"application/vnd.linkedin.normalized+json+2.1","accept-language":"en-US,en;q=0.9","csrf-token":csrf,"x-li-deco-include-micro-schema":"true","x-li-lang":"en_US","x-li-page-instance":"urn:li:page:d_flagship3_job_details;8+bX55W5TJqvu90HI366wQ==","x-li-track":"{\"clientVersion\":\"1.2.7702.0\",\"osName\":\"web\",\"timezoneOffset\":"+timeOffset+",\"deviceFormFactor\":\"DESKTOP\",\"mpName\":\"voyager-web\"}","x-restli-protocol-version":"2.0.0"},"referrerPolicy":"no-referrer-when-downgrade","body":null,"method":"GET","mode":"cors"});
   var jdat = await res.json();
   var output = parseObj(jdat);
   if(jobArr.some(job=> job.jobPostingUrl == output.jobPostingUrl) === false) jobArr.push(output);
