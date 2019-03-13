@@ -30,7 +30,7 @@ var numRes = parseInt(document.getElementsByClassName('jobs-search-two-pane__wra
 var num = numRes > 999 ? 1000 : numRes;
 console.log(num);
 
-var csvReady = (s) => s.replace(/\r|\n/g, ' __ ').replace(/(?<=\d),(?=\d)/g, '').replace(/,/g, ';').replace(/â€™/g, "'").replace(/(?!\w)(?!\s)(?!\+)(?!\!)(?!@)(?!;)(?!\.)(?!\?)(?!\/)(?!\\)(?!")(?!')(?!\|)(?!\{)(?!\})(?!\[)(?!\])(?!\=)(?!-)(?!\()(?!\))(?!\*)(?!\&)(?!\^)(?!%)(?!#)(?!~)(?!\$)./g, '');
+var csvReady = (s) => s.replace(/\r|\n/g, ' __ ').replace(/(?<=\d),(?=\d)/g, '').replace(/,/g, ';').replace(/â€™/g, "'").replace(/Â\s+__/g, ': ').replace(/Â/g, '').replace(/__\s+__/g, '__').replace(/(?!\w)(?!\s)(?!\+)(?!\!)(?!@)(?!;)(?!\.)(?!\?)(?!\/)(?!\\)(?!")(?!')(?!\|)(?!\{)(?!\})(?!\[)(?!\])(?!\=)(?!-)(?!\()(?!\))(?!\*)(?!\&)(?!\^)(?!%)(?!#)(?!~)(?!\$)./g, '');
 
 var tsvTo2dArr = (tsv) => tsv.split(/\r|\n/)
 .map(itm=> itm.split(/(?<=^|\t)/));
