@@ -30,7 +30,7 @@ var numRes = parseInt(document.getElementsByClassName('jobs-search-two-pane__wra
 var num = numRes > 999 ? 1000 : numRes;
 console.log(num);
 
-var csvReady = (s) => s.replace(/\r|\n/g, ' ___ ').replace(/,/g, ';');
+var csvReady = (s) => s.replace(/\r|\n/g, ' ___ ').replace(/,/g, ';').replace(/(?!\w)(?!\s)(?!\+)(?!\!)(?!@)(?!;)(?!\.)(?!\?)(?!\/)(?!\\)(?!")(?!')(?!\|)(?!\{)(?!\})(?!\[)(?!\])(?!\=)(?!-)(?!\()(?!\))(?!\*)(?!\&)(?!\^)(?!%)(?!#)(?!~)(?!\$)./g, '');
 
 var tsvTo2dArr = (tsv) => tsv.split(/\r|\n/)
 .map(itm=> itm.split(/(?<=^|\t)/));
@@ -313,25 +313,25 @@ function parseObj(obj){
   var applies = obj.data.applies; //number
   var scrapeTimestamp = new Date().getTime(); //number
   var remote = obj.data.workRemoteAllowed ? 'yes' : 'no';
+  var jobPosterProf = jobPoster ? 'www.linkedin.com/in/'+jobPoster : '';
 
   var csvdat = [
-companyid,
-jobPostingUrl,
-csvReady(formattedLocation), 
-new Date(orginalListDate), 
-new Date(lastUpdateDate), 
-new Date(expirationDate), 
-csvReady(industry.toString()), 
-csvReady(jobFunction.toString()),
-'www.linkedin.com/in/'+jobPoster,
-monthsExpReq,
-csvReady(skills.toString()),
-csvReady(title),
-applies,
-remote,
-csvReady(description)
+	companyid,
+	jobPostingUrl,
+	csvReady(formattedLocation), 
+	new Date(orginalListDate), 
+	new Date(lastUpdateDate), 
+	new Date(expirationDate), 
+	csvReady(industry.toString()), 
+	csvReady(jobFunction.toString()),
+	jobPosterProf,
+	monthsExpReq,
+	csvReady(skills.toString()),
+	csvReady(title),
+	applies,
+	remote,
+	csvReady(description)
 ]
-// csvReady
   var jdat = {
 	"companyid":companyid,
 	"title":title,
