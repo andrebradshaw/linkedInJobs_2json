@@ -30,7 +30,7 @@ var numRes = parseInt(document.getElementsByClassName('jobs-search-two-pane__wra
 var num = numRes > 999 ? 1000 : numRes;
 console.log(num);
 
-var csvReady = (s) => s.replace(/\r|\n/g, ' ___ ').replace(/,/g, ';').replace(/(?!\w)(?!\s)(?!\+)(?!\!)(?!@)(?!;)(?!\.)(?!\?)(?!\/)(?!\\)(?!")(?!')(?!\|)(?!\{)(?!\})(?!\[)(?!\])(?!\=)(?!-)(?!\()(?!\))(?!\*)(?!\&)(?!\^)(?!%)(?!#)(?!~)(?!\$)./g, '');
+var csvReady = (s) => s.replace(/\r|\n/g, ' __ ').replace(/(?<=\d),(?=\d)/g, '').replace(/,/g, ';').replace(/â€™/g, "'").replace(/(?!\w)(?!\s)(?!\+)(?!\!)(?!@)(?!;)(?!\.)(?!\?)(?!\/)(?!\\)(?!")(?!')(?!\|)(?!\{)(?!\})(?!\[)(?!\])(?!\=)(?!-)(?!\()(?!\))(?!\*)(?!\&)(?!\^)(?!%)(?!#)(?!~)(?!\$)./g, '');
 
 var tsvTo2dArr = (tsv) => tsv.split(/\r|\n/)
 .map(itm=> itm.split(/(?<=^|\t)/));
@@ -134,7 +134,7 @@ cd.appendChild(cb);
 var hd = document.createElement("div");
 hd.setAttribute("id", id+"_mover");
 hd.style.width = "99%";
-hd.style.height = "20%";
+hd.style.height = "25%";
 hd.style.backgroundColor = "#000000";
 hd.style.borderTopLeftRadius = ".15em";
 hd.style.borderTopRightRadius = ".15em";
@@ -151,7 +151,7 @@ tf.setAttribute("id", id+"_textfile");
 tf.setAttribute("placeholder", "filename")
 tf.style.width = "36%";
 tf.style.height = "100%";
-tf.style.padding = "6px";
+tf.style.padding = "3px";
 tf.style.border = "1px solid #000000";
 tf.style.background = "#0f0f0f";
 tf.style.color = "#ffffff";
@@ -166,7 +166,7 @@ var tb = document.createElement("div");
 tb.setAttribute("id", id+"_textarea");
 tb.innerText = "Grabbing Job Ids...";
 tb.style.width = "99%";
-tb.style.height = "80%";
+tb.style.height = "75%";
 tb.style.padding = "3px";
 tb.style.border = "1px solid #000000";
 tb.style.color = "#878787";
@@ -259,7 +259,7 @@ async function loopthrough(){
     console.log(i);
 	await delay(rando(100)+3601);
     var idsPercCompl = Math.round((idArr.length/num) *100);
-    gi(document, popid+"_textarea").innerText = 'Mapping Job Ids... ' +idsPercCompl+ '% completed.\nThis part will take about '+(Math.round((num/25)*3.7)+10)+' seconds\nThen we will dive into those jobs.';
+    gi(document, popid+"_textarea").innerText = 'Mapping Job Ids... ' +idsPercCompl+ '% completed.\nThis part will take about '+(Math.round((num/25)*3.7)+10)+' seconds.\nThen we will dive into those jobs.';
     if(idArr.length >= (num - 3)) {
       gi(document, popid+"_textarea").innerText = 'Initializing Scraper...';
 	  await delay(10000);
@@ -274,7 +274,7 @@ async function looper(){
 	console.log(i);
     var jobsPercCompl = Math.round((jobArr.length/num) *10000)/100;
     gi(document, popid+"_textarea").innerText = 'Scraping Jobs... ' +jobsPercCompl+ '% completed.';
-    if(i == idArr.length -1) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter';
+    if(i == idArr.length -1) gi(document, popid+"_textarea").innerText = '100% completed. Download by naming your file.\nAnd press Enter.';
 	await delay(rando(100)+1601);
   }
 }
