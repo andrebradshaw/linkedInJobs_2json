@@ -126,7 +126,7 @@ cd.appendChild(cb);
 var hd = document.createElement("div");
 hd.setAttribute("id", id+"_mover");
 hd.style.width = "99%";
-hd.style.height = "20%";
+hd.style.height = "25%";
 hd.style.backgroundColor = "#000000";
 hd.style.borderTopLeftRadius = ".15em";
 hd.style.borderTopRightRadius = ".15em";
@@ -141,9 +141,9 @@ cd.appendChild(hd);
 var tf = document.createElement("input");
 tf.setAttribute("id", id+"_textfile");
 tf.setAttribute("placeholder", "filename")
-tf.style.width = "36%";
+tf.style.width = "38%";
 tf.style.height = "100%";
-tf.style.padding = "6px";
+tf.style.padding = "4px";
 tf.style.border = "1px solid #000000";
 tf.style.background = "#0f0f0f";
 tf.style.color = "#ffffff";
@@ -158,7 +158,7 @@ var tb = document.createElement("div");
 tb.setAttribute("id", id+"_textarea");
 tb.innerText = "Grabbing Job Ids...";
 tb.style.width = "99%";
-tb.style.height = "80%";
+tb.style.height = "75%";
 tb.style.padding = "3px";
 tb.style.border = "1px solid #000000";
 tb.style.color = "#878787";
@@ -206,8 +206,11 @@ function nodrag(){
 }
 
 function dlBox(){
+  var csvTable = (arr) => arr.map(itm=>{	return itm.toString().replace(/$/, '\r'); }).toString().replace(/\r,/g, '\r');
   var filename = gi(document,popid+"_textfile").value;
-  downloadr(jobArr,filename);
+  if(/\.json$/.test(filename))  downloadr(jobArr,filename);
+  if(/\.csv$/.test(filename))  downloadr(csvTable(csvArr),filename);
+  if(/^.{0}$/.test(filename))  downloadr(csvTable(csvArr),'defaultName.csv');
 }
 
 async function downloadr(str, name) {
