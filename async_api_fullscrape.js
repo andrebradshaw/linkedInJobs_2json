@@ -1,12 +1,28 @@
 var idArr = [];
 var jobArr = [];
-var csrf = "ajax:2466362236496889676";
+var csrf = "ajax:2773576118997798665";
 var delay = (ms) => new Promise(res => setTimeout(res, ms));
 var reg = (x,n) => x ? x[n] : '';
+var rando = (n) => Math.round(Math.random()*n);
+var cn = (ob, nm) => ob ? ob.getElementsByClassName(nm) : console.log(ob);
+var tn = (ob, nm) => ob ? ob.getElementsByTagName(nm) : console.log(ob);
+var gi = (ob, nm) => ob ? ob.getElementById(nm) : console.log(ob);
+// var noHTML = (str) => str.replace(/<.+?>/g, '').replace(/\s+/g, ' ').replace(/&.+?;/g, '');
+var cleanName = (s) => s.replace(/(?<=^.+?)\s+-\s+.+|(?<=^.+?)\s*[sSJj][Rr].+|(?<=^.+?)\s*(III|IV|II).*|(?<=^.+?)\b,.*|(?<=^.+?)\s*\(.*/, '');
+var fixCase = (s) => s.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
 
+/* alert(document.getElementById("jet-csrfToken").getAttribute("content")) */
 var numRes = parseInt(document.getElementsByClassName('jobs-search-two-pane__wrapper jobs-search-two-pane__wrapper--two-pane')[0].getElementsByClassName('t-12 t-black--light t-normal')[0].innerText.replace(/\D+/g, ''));
 var num = numRes > 999 ? 1000 : numRes;
+console.log(num);
+
+
+async function buildUI(){
+
+
+}
+
 
 async function searchJobs(p){
   var url = window.location.href.replace(/&start=\d+/,'');
@@ -23,7 +39,7 @@ async function loopthrough(){
   for(var i=0; i<num; i=i+25){
 	searchJobs(i);
     console.log(i);
-	await delay(Math.round(Math.random()*100)+3601);
+	await delay(rando(100)+3601);
     if(idArr.length >= (num - 10)) {
 		await delay(20000)
 		looper();
@@ -40,59 +56,59 @@ async function getPostingById(id){
 }
 
 function parseObj(obj){
-  var coid = obj.data.companyDetails.company ? obj.data.companyDetails.company.replace(/\D+/g, '') : '0'; //string
-  var desc = obj.data.description.text; //string
-  var orglisted = obj.data.originalListedAt; //number milsec
-  var lastlisted = obj.data.listedAt; //number milsec
-  var expMonths = obj.data.candidateMonthsOfExperience; //number
+  var companyid = obj.data.companyDetails.company ? obj.data.companyDetails.company.replace(/\D+/g, '') : '0'; //string
+  var description = obj.data.description.text; //string
+  var orginalListDate = obj.data.originalListedAt; //number milsec
+  var lastUpdateDate = obj.data.listedAt; //number milsec
+  var monthsExpReq = obj.data.candidateMonthsOfExperience; //number
   var expiry = obj.data.expireAt; //number milsec
-  var ind = obj.data.formattedIndustries; //array
-  var func = obj.data.formattedJobFunctions; //array
-  var postlink = obj.data.jobPostingUrl.replace(/\?.+/, ''); //string
+  var industry = obj.data.formattedIndustries; //array
+  var jobFunction = obj.data.formattedJobFunctions; //array
+  var jobPostingUrl = obj.data.jobPostingUrl.replace(/\?.+/, ''); //string
   var geofacet = obj.data.jobRegion; //string
-  var geo = obj.data.formattedLocation; //string
+  var formattedLocation = obj.data.formattedLocation; //string
   var poster = reg(/(?<=profile:).+/.exec(obj.data.poster),0); //string
   var skills = obj.data.skillMatches ? obj.data.skillMatches.map(itm=> itm.value) : []; //array 
   var title = obj.data.title; //string
-  var type = obj.data.formattedEmploymentStatus; //string
-  var level = obj.data.formattedExperienceLevel; //string
+  var jobType = obj.data.formattedEmploymentStatus; //string
+  var jobLevel = obj.data.formattedExperienceLevel; //string
   var views = obj.data.views; //number
   var applies = obj.data.applies; //number
-  var timestamp = new Date().getTime(); //number
+  var scrapeTimestamp = new Date().getTime(); //number
   var remote = obj.data.workRemoteAllowed ? 'yes' : 'no';
   var salary = obj.data.salaryInsights;
   
   var jdat = {
-	"coid":coid,
+	"companyid":companyid,
 	"title":title,
-	"desc":desc,
-    "orglisted":orglisted,
-	"lastlisted":lastlisted,
-    "expMonths": expMonths,
+	"description":description,
+    "orginalListDate":orginalListDate,
+	"lastUpdateDate":lastUpdateDate,
+    "monthsExpReq": monthsExpReq,
 	"expiry":expiry,
-	"ind":ind,
-	"func":func,
-	"postlink":postlink,
+	"industry":industry,
+	"jobFunction":jobFunction,
+	"jobPostingUrl":jobPostingUrl,
 	"geofacet":geofacet,
-	"geo":geo,
-	"poster":poster,
+	"formattedLocation":formattedLocation,
+	"jobPoster":jobPoster,
 	"skills":skills,
-	"type":type,
-	"level":level,
+	"jobType":jobType,
+	"jobLevel":jobLevel,
 	"views":views,
     "applies": applies,
     "remote": remote,
     "salary":salary,
-	"timestamp":timestamp,
+	"scrapeTimestamp":scrapeTimestamp,
 	};
-return jdat;
+  return jdat;
 }
 
 async function looper(){
   for(var i=0; i<idArr.length; i++){
 	getPostingById(idArr[i]);
 	console.log(i);
-	await delay(Math.round(Math.random()*100)+1601);
+	await delay(rando(100)+1601);
   }
 }
 
