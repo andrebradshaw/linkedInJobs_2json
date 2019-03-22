@@ -9,7 +9,7 @@ async function initJobScraper() {
   var idArr = [];
   var jobArr = [];
   var csvArr = [
-    ["Company Id","Job Posting Url","Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Remote","Description"]
+    ["Company Id","Job Posting Url","Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Number of Views","Remote","Description","Company Description"]
   ];
   var csrf = await getCsrfId();
   var popid = "popup_jobs";
@@ -275,6 +275,9 @@ async function initJobScraper() {
     });
 
     var text = await res.text();
+    var doc = new DOMParser().parseFromString(text, 'text/html');
+console.log(text);
+console.log(doc);
     var matches = text.match(/(?<=fs_normalized_jobPosting:)\d+/g);
     for (var m = 0; m < matches.length; m++) {
       if (idArr.some(itm => itm == matches[m]) === false) idArr.push(matches[m]);
@@ -338,6 +341,8 @@ async function initJobScraper() {
 
   function parseObj(obj) {
     var companyid = obj.data.companyDetails.company ? obj.data.companyDetails.company.replace(/\D+/g, '') : '0';
+
+    var coDesc = obj.data.companyDescription ? obj.data.companyDescription.text : '';
     var description = obj.data.description.text;
     var originalListDate = obj.data.originalListedAt;
     var lastUpdateDate = obj.data.listedAt;
@@ -372,14 +377,17 @@ async function initJobScraper() {
       monthsExpReq,
       csvReady(skills.toString()),
       csvReady(title),
+      views,
       applies,
       remote,
-      csvReady(description)
+      csvReady(description),
+      csvReady(coDesc)
     ];
     var jdat = {
       "companyid": companyid,
       "title": title,
       "description": description,
+      "companyDescription": coDesc,
       "originalListDate": originalListDate,
       "lastUpdateDate": lastUpdateDate,
       "monthsExpReq": monthsExpReq,
