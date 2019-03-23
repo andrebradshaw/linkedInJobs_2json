@@ -9,7 +9,7 @@ async function initJobScraper() {
   var idArr = [];
   var jobArr = [];
   var csvArr = [
-    ["Company Id","Job Posting Url","Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Number of Views","Remote","Description","Company Description"]
+    ["Company Id","Job Posting Url","Source Domain","Job Location","Original Listing Date","Last Updated Date","Expiration Date","Industry","Job Functions","Job Poster Url","Months Experience Required","Skills","Job Title","Number of Applies","Number of Views","Remote","Description","Company Description"]
   ];
   var csrf = await getCsrfId();
   var popid = "popup_jobs";
@@ -276,8 +276,6 @@ async function initJobScraper() {
 
     var text = await res.text();
     var doc = new DOMParser().parseFromString(text, 'text/html');
-console.log(text);
-console.log(doc);
     var matches = text.match(/(?<=fs_normalized_jobPosting:)\d+/g);
     for (var m = 0; m < matches.length; m++) {
       if (idArr.some(itm => itm == matches[m]) === false) idArr.push(matches[m]);
@@ -290,10 +288,10 @@ console.log(doc);
       console.log(i);
       await delay(rando(100) + 3601);
       var idsPercCompl = Math.round((idArr.length / num) * 100);
-      gi(document, popid + "_textarea").innerText = 'Mapping Job Ids... ' + idsPercCompl + '% completed.\nThis part will take about ' + (Math.round((num / 25) * 3.7) + 10) + ' seconds.\nThen we will dive into those jobs.';
+      gi(document, popid + "_textarea").innerText = 'Mapping Job Ids... ' + idsPercCompl + '% completed.\nThis part will take about ' + (Math.round((num / 25) * 3.7) + 6) + ' seconds.\nThen we will dive into those jobs.';
       if (idArr.length >= (num - 3)) {
         gi(document, popid + "_textarea").innerText = 'Initializing Scraper...';
-        await delay(10000);
+        await delay(6000);
         looper();
       }
     }
@@ -330,6 +328,7 @@ console.log(doc);
       "mode": "cors"
     });
     var jdat = await res.json();
+console.log(jdat);
     var output = parseObj(jdat);
     var j = output[0];
     var c = output[1];
@@ -363,10 +362,12 @@ console.log(doc);
     var scrapeTimestamp = new Date().getTime();
     var remote = obj.data.workRemoteAllowed ? 'yes' : 'no';
     var jobPosterProf = jobPoster ? 'www.linkedin.com/in/' + jobPoster : '';
-
+    var sourceDomain = obj.data.sourceDomain ? obj.data.sourceDomain : '';
+    
     var csvdat = [
       companyid,
       jobPostingUrl,
+      sourceDomain,
       csvReady(formattedLocation),
       new Date(originalListDate),
       new Date(lastUpdateDate),
@@ -386,6 +387,7 @@ console.log(doc);
     var jdat = {
       "companyid": companyid,
       "title": title,
+      "sourceDomain": sourceDomain,
       "description": description,
       "companyDescription": coDesc,
       "originalListDate": originalListDate,
