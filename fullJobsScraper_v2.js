@@ -1,4 +1,3 @@
-
 var reg = (o, n) => o ? o[n] : '';
 var cn = (o, s) => o ? o.getElementsByClassName(s) : console.log(o);
 var tn = (o, s) => o ? o.getElementsByTagName(s) : console.log(o);
@@ -10,7 +9,6 @@ var fixCase = (s) => s.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + 
 var timer = new Date().getTime().toString().replace(/\d{4}$/, '0000');
 var rando = (n) => Math.round(Math.random() * n);
 var fixDate = (s) => s ? s.replace(/[a-zA-Z]+/, s.replace(/(?<=[a-zA-Z]{3}).+/g, '')) : '';
-
 
 var timezone = -Math.abs(new Date().getTimezoneOffset() / 60);
 
@@ -60,13 +58,11 @@ async function searchJobs(params) {
   return d;
 }
 
-
 async function looper() {
   var containArr = [
-    ['Company Name', 'Company Id', 'Job Title', 'Job Id', 'Job Desc', 'Apply Url', 'Expiry Date', 'Listing Date', 'Listing Type', 'Source Domain', 'Job Location', 'Zip Code', 'lat', 'lng']
+    ['Company Name', 'Company Id', 'Company Link', 'Job Link', 'Job Title', 'Job Desc', 'Apply Url', 'Expiry Date', 'Listing Date', 'Listing Type', 'Source Domain', 'Job Location', 'Zip Code', 'lat', 'lng']
   ];
   var query = reg(/(?<=jobs\/search\/\?).+/.exec(window.location.href), 0).replace(/&start=\d+/, '').replace(/\(/g, '%28').replace(/\)/g, '%29') + '&origin=JOB_SEARCH_RESULTS_PAGE&q=jserpAll&query=search&refresh=true';
-  console.log(query)
   var res = await searchJobs(query + '&start=0');
   var paging = res.data.paging;
 
@@ -90,17 +86,13 @@ async function looper() {
   downloadr(containArr, 'jobs_'+new Date().getTime()+'.csv');
 }
 
-looper()
-
-
-
 function parseJobPost(obj, arr, jobarr) {
   var jobid = reg(/(?<=fs_jobSavingInfo:)\d+/.exec(JSON.stringify(obj)), 0);
   var desc = jobarr.filter(el => el[1] == jobid);
   var coname = obj.companyDetails.companyName ? obj.companyDetails.companyName : '';
   var coid = obj.companyDetails.company ? reg(/\d+$/.exec(obj.companyDetails.company), 0) : '';
   var cname = arr.filter(el => el[1] == coid);
-  var name = cname.length > 0 ? cname[0][0] : coname
+  var name = cname.length > 0 ? cname[0][0] : coname;
   var title = obj.title ? obj.title : '';
   var applyurl = obj.applyMethod ? obj.applyMethod.companyApplyUrl : '';
   var expiry = obj.expireAt ? new Date(obj.expireAt) : 0;
@@ -116,8 +108,9 @@ function parseJobPost(obj, arr, jobarr) {
   var out = [
     name,
     coid,
-    title,
+    'https://www.linkedin.com/company/'+coid,
     'https://www.linkedin.com/jobs/view/'+ jobid,
+    title,
     desc.length > 0 ? desc[0][0].replace(/&#x2019;/g,'') : '',
     applyurl ? applyurl : '',
     expiry,
@@ -131,3 +124,5 @@ function parseJobPost(obj, arr, jobarr) {
   ];
   return out;
 }
+
+looper()
